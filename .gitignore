@@ -1,0 +1,5 @@
+secrets*
+.terraform*
+.auto
+!.example.*
+.tfstate

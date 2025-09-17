@@ -1,0 +1,35 @@
+variable "rg_name" {
+  type        = string
+  description = "resource group name"
+}
+variable "rg_location" {
+  type        = string
+  description = "resource group location"
+}
+
+variable "vnet_name" {
+  type        = string
+  description = "Name of the VNet"
+}
+
+variable "subnet_agw_id" {
+  type        = string
+  description = "ID of the AGW subnet"
+}
+variable "fe_app_id" {
+  type        = string
+  description = "ID of the frontend container app"
+}
+variable "be_app_id" {
+  type        = string
+  description = "ID of the backend container app"
+}
+
+variable "be_app_fqdn" {
+  type        = string
+  description = "FQDN of the backend container app"
+}
+variable "fe_app_fqdn" {
+  type        = string
+  description = "FQDN of the frontend container app"
+}
