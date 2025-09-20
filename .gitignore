@@ -1,5 +1,5 @@
 secrets*
 .terraform*
-.auto
 !.example.*
-.tfstate
+*.tfstate*
+terraform.auto.tfvars

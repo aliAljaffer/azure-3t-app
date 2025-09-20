@@ -1,8 +1,8 @@
 
 resource "azurerm_resource_group" "main-rg" {
-  name     = "devops2-rg-ali"
-  location = "West US 2"
+  name     = var.resource_group_name
+  location = var.resource_group_location
   tags = {
-    "provisioner" = "ali-terraform"
+    "provisioner" = "${lower(replace(var.author, " ", "-"))}-terraform"
   }
 }

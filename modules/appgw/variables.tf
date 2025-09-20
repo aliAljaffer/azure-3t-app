@@ -7,6 +7,17 @@ variable "rg_location" {
   description = "resource group location"
 }
 
+variable "author" {
+  type        = string
+  description = "Name of the author"
+  default     = "terraform"
+}
+variable "resource_prefix" {
+  type        = string
+  description = "Prefix for resources"
+  default     = "devops-tf"
+}
+
 variable "vnet_name" {
   type        = string
   description = "Name of the VNet"
@@ -32,4 +43,13 @@ variable "be_app_fqdn" {
 variable "fe_app_fqdn" {
   type        = string
   description = "FQDN of the frontend container app"
+}
+
+variable "be_port" {
+  type        = number
+  description = "Port number for backend"
+}
+variable "fe_port" {
+  type        = number
+  description = "Port number for frontend"
 }

@@ -17,3 +17,7 @@ output "db_password" {
   value     = azurerm_mssql_server.products_db_server.administrator_login_password
   sensitive = true
 }
+output "mssql_server_name" {
+  # Hmmmm
+  value = azurerm_mssql_server.products_db_server.name
+}

@@ -14,12 +14,3 @@ provider "azurerm" {
 
   }
 }
-
-locals {
-  common_tags = {
-    Author      = "Ali Aljaffer"
-    Project     = "Project1-ih"
-    Provisioner = "Terraform"
-  }
-}
-

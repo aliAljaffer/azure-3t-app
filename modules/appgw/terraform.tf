@@ -1,13 +1,18 @@
 resource "azurerm_application_gateway" "agw" {
-  name                = "devops2-agw-ali"
+  name                = "${var.resource_prefix}-agw-${lower(replace(var.author, " ", "-"))}"
   resource_group_name = var.rg_name
   location            = var.rg_location
   depends_on          = [var.fe_app_id, var.be_app_id]
 
   sku {
-    name     = "WAF_v2"
-    tier     = "WAF_v2"
-    capacity = 10
+    name = "WAF_v2"
+    tier = "WAF_v2"
+  }
+
+  waf_configuration {
+    enabled          = true
+    firewall_mode    = "Prevention"
+    rule_set_version = "3.0"
   }
 
   autoscale_configuration {
@@ -39,24 +44,24 @@ resource "azurerm_application_gateway" "agw" {
   }
 
   backend_http_settings {
-    name                  = local.backend_address_pool_name_fe
+    name                  = local.http_setting_name_fe
     cookie_based_affinity = "Disabled"
-    path                  = "/*"
-    protocol              = "Http"
-    request_timeout       = 60
-    port                  = 80
-    host_name             = var.fe_app_fqdn
-    probe_name            = local.pe_probe_fe
+
+    protocol                            = "Http"
+    request_timeout                     = 60
+    port                                = var.fe_port
+    pick_host_name_from_backend_address = true
+    probe_name                          = local.pe_probe_fe
   }
   backend_http_settings {
-    name                  = local.backend_address_pool_name_be
+    name                  = local.http_setting_name_be
     cookie_based_affinity = "Disabled"
-    path                  = "/api/*"
     protocol              = "Http"
     request_timeout       = 60
-    port                  = 3001
-    host_name             = var.be_app_fqdn
-    probe_name            = local.pe_probe_be
+    # Changed
+    port                                = var.be_port
+    pick_host_name_from_backend_address = true
+    probe_name                          = local.pe_probe_be
   }
 
   http_listener {
@@ -65,18 +70,10 @@ resource "azurerm_application_gateway" "agw" {
     frontend_ip_configuration_name = local.frontend_ip_configuration_name
     frontend_port_name             = local.frontend_port_name
   }
-
-  request_routing_rule {
-    name                       = local.request_routing_rule_name_be
-    priority                   = 100
-    rule_type                  = "PathBasedRouting"
-    http_listener_name         = local.listener_name
-    backend_address_pool_name  = local.backend_address_pool_name_be
-    backend_http_settings_name = local.http_setting_name_be
-    url_path_map_name          = local.pm_name
-  }
   url_path_map {
-    name = local.pm_name
+    name                               = local.pm_name
+    default_backend_address_pool_name  = local.backend_address_pool_name_fe
+    default_backend_http_settings_name = local.http_setting_name_fe
     path_rule {
       paths                      = ["/*"]
       backend_address_pool_name  = local.backend_address_pool_name_fe
@@ -84,39 +81,46 @@ resource "azurerm_application_gateway" "agw" {
       name                       = "redir-to-fe"
     }
     path_rule {
-      paths                      = ["/api/*"]
+      paths                      = ["/api/*", "/health"]
       backend_address_pool_name  = local.backend_address_pool_name_be
       backend_http_settings_name = local.http_setting_name_be
       name                       = "redir-to-be"
     }
   }
+  request_routing_rule {
+    name                       = local.request_routing_rule_name_be
+    priority                   = 100
+    rule_type                  = "PathBasedRouting"
+    http_listener_name         = local.listener_name
+    backend_address_pool_name  = local.backend_address_pool_name_fe
+    backend_http_settings_name = local.backend_address_pool_name_fe
+    url_path_map_name          = local.pm_name
+  }
 
   probe {
-    host                                      = "127.0.0.1"
-    interval                                  = 60
+    interval                                  = 120
     name                                      = local.pe_probe_be
-    port                                      = 3001
+    port                                      = var.be_port
     path                                      = "/health"
-    timeout                                   = 300
+    timeout                                   = 60
     unhealthy_threshold                       = 3
-    pick_host_name_from_backend_http_settings = false
+    pick_host_name_from_backend_http_settings = true
     protocol                                  = "Http"
   }
   probe {
-    host                                      = "127.0.0.1"
     interval                                  = 60
     name                                      = local.pe_probe_fe
-    port                                      = 80
-    path                                      = "/health"
-    timeout                                   = 300
+    port                                      = var.fe_port
+    path                                      = "/"
+    timeout                                   = 60
     unhealthy_threshold                       = 3
-    pick_host_name_from_backend_http_settings = false
+    pick_host_name_from_backend_http_settings = true
     protocol                                  = "Http"
   }
 }
 
 resource "azurerm_public_ip" "agw_pip" {
-  name                = "devops2-agw-pip-ali"
+  name                = "${var.resource_prefix}-agw-pip-${lower(replace(var.author, " ", "-"))}"
   resource_group_name = var.rg_name
   location            = var.rg_location
   allocation_method   = "Static"

@@ -24,3 +24,30 @@ variable "db_id" {
   type        = string
   description = "ID of the database"
 }
+variable "author" {
+  type        = string
+  description = "Name of the author"
+  default     = "terraform"
+}
+variable "resource_prefix" {
+  type        = string
+  description = "Prefix for resources"
+  default     = "devops-tf"
+}
+variable "contact_person_name" {
+  type        = string
+  description = "Information about who to contact"
+}
+variable "contact_person_email" {
+  type        = string
+  description = "Information about who to contact"
+}
+
+variable "service_plan_id" {
+  type        = string
+  description = "service plan ID to scale"
+}
+variable "service_plan_name" {
+  type        = string
+  description = "service plan ID to scale"
+}
