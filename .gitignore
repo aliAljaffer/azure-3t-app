@@ -3,3 +3,4 @@ secrets*
 !.example.*
 *.tfstate*
 terraform.auto.tfvars
+.DS_Store

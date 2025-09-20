@@ -13,3 +13,11 @@ Deploys a three tier web app that uses App Service for the frontend (React) and 
 - Frontend, backend, and database all isolated in their own subnets with private communication between them using private endpoints for the database and IP restrictions on the frontend/backend, limiting communication to the Application Gateway.
 
 - Application Gateway is the only form of public access available on the website, managing traffic using path-based routing between the frontend and backend.
+
+## System Design
+
+![](./images/sd1.png)
+
+## System Design - App Gateway detailed with Health Probes
+
+![](./images/sd2.png)
