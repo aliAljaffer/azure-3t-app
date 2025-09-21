@@ -38,6 +38,7 @@ module "appservice" {
   subnet_agw_id              = module.subnets.subnet_agw_id
   mssql_server_name          = module.db.mssql_server_name
   agw_ip                     = module.appgw.agw_ip
+
 }
 module "db" {
   source                     = "./modules/db"
@@ -65,8 +66,10 @@ module "monitoring" {
   contact_person_name  = var.contact_person_name
   author               = var.author
   resource_prefix      = var.resource_prefix
-  service_plan_id      = module.appservice.service_plan_id
-  service_plan_name    = module.appservice.service_plan_name
+  service_plan_be_id   = module.appservice.service_plan_be_id
+  service_plan_be_name = module.appservice.service_plan_be_name
+  service_plan_fe_id   = module.appservice.service_plan_fe_id
+  service_plan_fe_name = module.appservice.service_plan_fe_name
 }
 module "nsg" {
   source          = "./modules/nsg"

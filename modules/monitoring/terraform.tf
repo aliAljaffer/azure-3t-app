@@ -7,6 +7,11 @@ resource "azurerm_monitor_action_group" "m_ag" {
     name          = var.contact_person_name
     email_address = var.contact_person_email
   }
+  webhook_receiver {
+    service_uri             = "https://discord.com/api/webhooks/1419214039774396487/SvRpbDhADj0E-mtvyHXAivI-I_w019LJ69Jec9SzMxTniL70LIvo3zYZMuCGfphDysdj"
+    name                    = "${var.contact_person_name}-discord"
+    use_common_alert_schema = true
+  }
 }
 
 resource "azurerm_monitor_metric_alert" "sql_cpu" {
@@ -171,11 +176,11 @@ resource "azurerm_monitor_metric_alert" "response_time" {
   }
 }
 
-resource "azurerm_monitor_autoscale_setting" "sp_autoscale" {
-  name                = "${var.service_plan_name}-autoscaler"
+resource "azurerm_monitor_autoscale_setting" "sp_autoscale_be" {
+  name                = "${var.service_plan_be_name}-autoscaler"
   resource_group_name = var.rg_name
   location            = var.rg_location
-  target_resource_id  = var.service_plan_id
+  target_resource_id  = var.service_plan_be_id
 
   profile {
     name = "default"
@@ -188,10 +193,10 @@ resource "azurerm_monitor_autoscale_setting" "sp_autoscale" {
     rule {
       metric_trigger {
         metric_name        = "CpuPercentage"
-        metric_resource_id = var.service_plan_id
+        metric_resource_id = var.service_plan_be_id
         time_grain         = "PT1M" # 1 minute
         statistic          = "Average"
-        time_window        = "PT5M" # 5 minutes
+        time_window        = "PT1M" # 5 minutes
         time_aggregation   = "Average"
         operator           = "GreaterThan"
         threshold          = 80
@@ -207,7 +212,7 @@ resource "azurerm_monitor_autoscale_setting" "sp_autoscale" {
     rule {
       metric_trigger {
         metric_name        = "CpuPercentage"
-        metric_resource_id = var.service_plan_id
+        metric_resource_id = var.service_plan_be_id
         time_grain         = "PT1M" # 1 minute
         statistic          = "Average"
         time_window        = "PT10M" # 10 minutes
@@ -228,7 +233,7 @@ resource "azurerm_monitor_autoscale_setting" "sp_autoscale" {
     rule {
       metric_trigger {
         metric_name        = "MemoryPercentage"
-        metric_resource_id = var.service_plan_id
+        metric_resource_id = var.service_plan_be_id
         time_grain         = "PT1M"
         statistic          = "Average"
         time_window        = "PT5M"
@@ -247,7 +252,7 @@ resource "azurerm_monitor_autoscale_setting" "sp_autoscale" {
     rule {
       metric_trigger {
         metric_name        = "MemoryPercentage"
-        metric_resource_id = var.service_plan_id
+        metric_resource_id = var.service_plan_be_id
         time_grain         = "PT1M"
         statistic          = "Average"
         time_window        = "PT10M"
@@ -270,6 +275,114 @@ resource "azurerm_monitor_autoscale_setting" "sp_autoscale" {
       send_to_subscription_administrator    = false
       send_to_subscription_co_administrator = false
       custom_emails                         = [var.contact_person_email]
+    }
+    webhook {
+      service_uri = "https://discord.com/api/webhooks/1419214039774396487/SvRpbDhADj0E-mtvyHXAivI-I_w019LJ69Jec9SzMxTniL70LIvo3zYZMuCGfphDysdj"
+    }
+  }
+}
+resource "azurerm_monitor_autoscale_setting" "sp_autoscale_fe" {
+  name                = "${var.service_plan_fe_name}-autoscaler"
+  resource_group_name = var.rg_name
+  location            = var.rg_location
+  target_resource_id  = var.service_plan_fe_id
+
+  profile {
+    name = "default"
+    capacity {
+      default = 1
+      minimum = 1
+      maximum = 10
+    }
+
+    rule {
+      metric_trigger {
+        metric_name        = "CpuPercentage"
+        metric_resource_id = var.service_plan_fe_id
+        time_grain         = "PT1M" # 1 minute
+        statistic          = "Average"
+        time_window        = "PT1M" # 5 minutes
+        time_aggregation   = "Average"
+        operator           = "GreaterThan"
+        threshold          = 80
+      }
+      scale_action {
+        direction = "Increase"
+        type      = "ChangeCount"
+        value     = "1"    # Add 1 instance
+        cooldown  = "PT5M" # Wait 5 minutes before next scale action
+      }
+    }
+
+    rule {
+      metric_trigger {
+        metric_name        = "CpuPercentage"
+        metric_resource_id = var.service_plan_fe_id
+        time_grain         = "PT1M" # 1 minute
+        statistic          = "Average"
+        time_window        = "PT10M" # 10 minutes
+        time_aggregation   = "Average"
+        operator           = "LessThan"
+        threshold          = 30
+      }
+
+      scale_action {
+        direction = "Decrease"
+        type      = "ChangeCount"
+        value     = "1"     # Remove 1 instance
+        cooldown  = "PT10M" # Wait 10 minutes before next scale action
+      }
+    }
+
+    # Memory-based scaling rule
+    rule {
+      metric_trigger {
+        metric_name        = "MemoryPercentage"
+        metric_resource_id = var.service_plan_fe_id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "GreaterThan"
+        threshold          = 85
+      }
+      scale_action {
+        direction = "Increase"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT5M"
+      }
+    }
+
+    rule {
+      metric_trigger {
+        metric_name        = "MemoryPercentage"
+        metric_resource_id = var.service_plan_fe_id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT10M"
+        time_aggregation   = "Average"
+        operator           = "LessThan"
+        threshold          = 40
+      }
+
+      scale_action {
+        direction = "Decrease"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT10M"
+      }
+    }
+  }
+
+  notification {
+    email {
+      send_to_subscription_administrator    = false
+      send_to_subscription_co_administrator = false
+      custom_emails                         = [var.contact_person_email]
+    }
+    webhook {
+      service_uri = "https://discord.com/api/webhooks/1419214039774396487/SvRpbDhADj0E-mtvyHXAivI-I_w019LJ69Jec9SzMxTniL70LIvo3zYZMuCGfphDysdj"
     }
   }
 }

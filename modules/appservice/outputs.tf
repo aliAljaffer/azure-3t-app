@@ -5,11 +5,17 @@
 # output "be_app_private_ip" {
 #   value = azurerm_private_endpoint.be_pe.private_service_connection[0].private_ip_address
 # }
-output "service_plan_id" {
-  value = azurerm_service_plan.service_plan.id
+output "service_plan_fe_id" {
+  value = azurerm_service_plan.service_plan_fe.id
 }
-output "service_plan_name" {
-  value = azurerm_service_plan.service_plan.name
+output "service_plan_fe_name" {
+  value = azurerm_service_plan.service_plan_fe.name
+}
+output "service_plan_be_id" {
+  value = azurerm_service_plan.service_plan_be.id
+}
+output "service_plan_be_name" {
+  value = azurerm_service_plan.service_plan_be.name
 }
 
 output "fe_app_fqdn" {

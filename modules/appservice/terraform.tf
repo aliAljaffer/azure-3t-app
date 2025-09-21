@@ -1,16 +1,19 @@
 locals {
-  fe_app_name       = "${var.resource_prefix}-fe-app-${lower(replace(var.author, " ", "-"))}"
-  be_app_name       = "${var.resource_prefix}-be-app-${lower(replace(var.author, " ", "-"))}"
-  fe_image_name     = "alialjaffer/project1-fe:linux_amd64"
-  be_image_name     = "alialjaffer/project1-be:linux_amd64"
-  service_plan_name = "${var.resource_prefix}-service-plan-${lower(replace(var.author, " ", "-"))}"
-  public_access     = true
+  fe_app_name          = "${var.resource_prefix}-fe-app-${lower(replace(var.author, " ", "-"))}"
+  be_app_name          = "${var.resource_prefix}-be-app-${lower(replace(var.author, " ", "-"))}"
+  fe_image_name        = "alialjaffer/project1-fe:linux_amd64"
+  be_image_name        = "alialjaffer/project1-be:linux_amd64"
+  service_plan_name_fe = "${var.resource_prefix}-fe-service-plan-${lower(replace(var.author, " ", "-"))}"
+  service_plan_name_be = "${var.resource_prefix}-be-service-plan-${lower(replace(var.author, " ", "-"))}"
+  public_access        = true
+  be_sku               = "P1v3" # B1 for basic, P1v3 for autoscaling
+  fe_sku               = "P1v3"
 }
 resource "azurerm_linux_web_app" "fe_app" {
   name                          = local.fe_app_name
   location                      = var.rg_location
   resource_group_name           = var.rg_name
-  service_plan_id               = azurerm_service_plan.service_plan.id
+  service_plan_id               = azurerm_service_plan.service_plan_fe.id
   virtual_network_subnet_id     = var.subnet_fe_id
   public_network_access_enabled = local.public_access
 
@@ -46,7 +49,7 @@ resource "azurerm_linux_web_app" "be_app" {
   name                          = local.be_app_name
   location                      = var.rg_location
   resource_group_name           = var.rg_name
-  service_plan_id               = azurerm_service_plan.service_plan.id
+  service_plan_id               = azurerm_service_plan.service_plan_be.id
   virtual_network_subnet_id     = var.subnet_be_id
   depends_on                    = [var.subnet_be_id, var.agw_ip]
   vnet_image_pull_enabled       = true
@@ -97,12 +100,19 @@ resource "azurerm_linux_web_app" "be_app" {
 
 }
 
-resource "azurerm_service_plan" "service_plan" {
-  name                = local.service_plan_name
+resource "azurerm_service_plan" "service_plan_be" {
+  name                = local.service_plan_name_be
   resource_group_name = var.rg_name
   location            = var.rg_location
   os_type             = "Linux"
-  sku_name            = "B1"
+  sku_name            = local.fe_sku
+}
+resource "azurerm_service_plan" "service_plan_fe" {
+  name                = local.service_plan_name_fe
+  resource_group_name = var.rg_name
+  location            = var.rg_location
+  os_type             = "Linux"
+  sku_name            = local.be_sku
 }
 
 

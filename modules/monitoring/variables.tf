@@ -43,11 +43,19 @@ variable "contact_person_email" {
   description = "Information about who to contact"
 }
 
-variable "service_plan_id" {
+variable "service_plan_be_id" {
   type        = string
   description = "service plan ID to scale"
 }
-variable "service_plan_name" {
+variable "service_plan_be_name" {
+  type        = string
+  description = "service plan ID to scale"
+}
+variable "service_plan_fe_id" {
+  type        = string
+  description = "service plan ID to scale"
+}
+variable "service_plan_fe_name" {
   type        = string
   description = "service plan ID to scale"
 }
