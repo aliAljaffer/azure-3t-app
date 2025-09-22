@@ -38,7 +38,8 @@ module "appservice" {
   subnet_agw_id              = module.subnets.subnet_agw_id
   mssql_server_name          = module.db.mssql_server_name
   agw_ip                     = module.appgw.agw_ip
-
+  fe_image_name_and_tag      = var.fe_image_name_and_tag
+  be_image_name_and_tag      = var.be_image_name_and_tag
 }
 module "db" {
   source                     = "./modules/db"

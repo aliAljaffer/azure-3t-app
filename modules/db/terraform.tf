@@ -22,18 +22,7 @@ resource "azurerm_mssql_database" "products_db" {
   auto_pause_delay_in_minutes = 60
   min_capacity                = 0.5
 }
-# # Virtual Network Rule - Allow only the VNet subnet
-# resource "azurerm_mssql_virtual_network_rule" "allow_backend_subnet" {
-#   name      = "allow-backend-subnet"
-#   server_id = azurerm_mssql_server.products_db_server.id
-#   subnet_id = var.subnet_be_id
-# }
 
-# resource "azurerm_mssql_virtual_network_rule" "allow_db_subnet" {
-#   name      = "allow-db-subnet"
-#   server_id = azurerm_mssql_server.products_db_server.id
-#   subnet_id = var.subnet_db_id
-# }
 # --- Private DNS Zone ---
 resource "azurerm_private_dns_zone" "sql_zone" {
   name                = "privatelink.database.windows.net"

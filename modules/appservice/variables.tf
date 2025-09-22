@@ -92,3 +92,11 @@ variable "agw_ip" {
   type        = string
   description = "IP of AGW"
 }
+variable "be_image_name_and_tag" {
+  type        = string
+  description = "The name and tag of the backend image on dockerhub: username/image:tag"
+}
+variable "fe_image_name_and_tag" {
+  type        = string
+  description = "The name and tag of the frontend image on dockerhub: username/image:tag"
+}

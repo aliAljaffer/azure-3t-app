@@ -5,3 +5,4 @@ secrets*
 terraform.auto.tfvars
 .DS_Store
 *.sh
+deadcode.tf

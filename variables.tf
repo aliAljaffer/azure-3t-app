@@ -43,3 +43,11 @@ variable "fe_port" {
 variable "db_admin" {
   type = string
 }
+variable "be_image_name_and_tag" {
+  type        = string
+  description = "The name and tag of the backend image on dockerhub: username/image:tag"
+}
+variable "fe_image_name_and_tag" {
+  type        = string
+  description = "The name and tag of the frontend image on dockerhub: username/image:tag"
+}

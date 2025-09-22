@@ -11,3 +11,5 @@
 # db_password = "Your very long database password here"
 # be_port=Port to the backend app
 # fe_port=Port to the frontend app
+# be_image_name_and_tag=The name and tag of the backend image on dockerhub: username/image:tag
+# fe_image_name_and_tag=The name and tag of the frontend image on dockerhub: username/image:tag
