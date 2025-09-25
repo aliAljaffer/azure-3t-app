@@ -11,6 +11,8 @@ provider "azurerm" {
   # Configuration options
   subscription_id = var.ARM_SUBSCRIPTION_ID
   features {
-
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
   }
 }
