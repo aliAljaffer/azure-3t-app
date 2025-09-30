@@ -34,10 +34,12 @@ variable "contact_person_email" {
 variable "be_port" {
   type        = number
   description = "Port number for backend"
+  default     = 80
 }
 variable "fe_port" {
   type        = number
   description = "Port number for frontend"
+  default     = 80
 }
 
 variable "db_admin" {

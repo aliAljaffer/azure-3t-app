@@ -2,7 +2,8 @@ secrets*
 .terraform*
 !.example.*
 *.tfstate*
-terraform.auto.tfvars
+*.tfvars
+!terraform.example.tfvars
 .DS_Store
 *.sh
 deadcode.tf

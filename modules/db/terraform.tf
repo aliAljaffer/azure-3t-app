@@ -1,6 +1,6 @@
 # --- MSSQL server setup ---
 resource "azurerm_mssql_server" "products_db_server" {
-  name                          = "${var.resource_prefix}-db-server-${lower(replace(var.author, " ", "-"))}"
+  name                          = "${lower(var.resource_prefix)}-db-server-${lower(replace(var.author, " ", "-"))}"
   resource_group_name           = var.rg_name
   location                      = var.rg_location
   version                       = "12.0"
@@ -12,7 +12,7 @@ resource "azurerm_mssql_server" "products_db_server" {
 
 # --- DB setup ---
 resource "azurerm_mssql_database" "products_db" {
-  name                        = "${var.resource_prefix}-db-${lower(replace(var.author, " ", "-"))}"
+  name                        = "${lower(var.resource_prefix)}-db-${lower(replace(var.author, " ", "-"))}"
   server_id                   = azurerm_mssql_server.products_db_server.id
   depends_on                  = [azurerm_mssql_server.products_db_server]
   collation                   = "SQL_Latin1_General_CP1_CI_AS"

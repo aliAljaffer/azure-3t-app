@@ -1,8 +1,8 @@
 locals {
-  fe_app_name          = "${var.resource_prefix}-fe-app-${lower(replace(var.author, " ", "-"))}"
-  be_app_name          = "${var.resource_prefix}-be-app-${lower(replace(var.author, " ", "-"))}"
-  service_plan_name_fe = "${var.resource_prefix}-fe-service-plan-${lower(replace(var.author, " ", "-"))}"
-  service_plan_name_be = "${var.resource_prefix}-be-service-plan-${lower(replace(var.author, " ", "-"))}"
+  fe_app_name          = "${lower(var.resource_prefix)}-fe-app-${lower(replace(var.author, " ", "-"))}"
+  be_app_name          = "${lower(var.resource_prefix)}-be-app-${lower(replace(var.author, " ", "-"))}"
+  service_plan_name_fe = "${lower(var.resource_prefix)}-fe-service-plan-${lower(replace(var.author, " ", "-"))}"
+  service_plan_name_be = "${lower(var.resource_prefix)}-be-service-plan-${lower(replace(var.author, " ", "-"))}"
   public_access        = true
   be_sku               = "P1v3" # B1 for basic with manual scaling, P1v3 for autoscaling with rules
   fe_sku               = "P1v3"

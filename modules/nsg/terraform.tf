@@ -1,10 +1,10 @@
 
 locals {
-  agw = "${var.resource_prefix}-agw-nsg-${lower(replace(var.author, " ", "-"))}"
-  db  = "${var.resource_prefix}-db-nsg-${lower(replace(var.author, " ", "-"))}"
-  fe  = "${var.resource_prefix}-fe-nsg-${lower(replace(var.author, " ", "-"))}"
-  be  = "${var.resource_prefix}-be-nsg-${lower(replace(var.author, " ", "-"))}"
-  pe  = "${var.resource_prefix}-pe-nsg-${lower(replace(var.author, " ", "-"))}"
+  agw = "${lower(var.resource_prefix)}-agw-nsg-${lower(replace(var.author, " ", "-"))}"
+  db  = "${lower(var.resource_prefix)}-db-nsg-${lower(replace(var.author, " ", "-"))}"
+  fe  = "${lower(var.resource_prefix)}-fe-nsg-${lower(replace(var.author, " ", "-"))}"
+  be  = "${lower(var.resource_prefix)}-be-nsg-${lower(replace(var.author, " ", "-"))}"
+  pe  = "${lower(var.resource_prefix)}-pe-nsg-${lower(replace(var.author, " ", "-"))}"
 }
 resource "azurerm_network_security_group" "nsg_agw" {
   name                = local.agw
@@ -86,6 +86,17 @@ resource "azurerm_network_security_group" "nsg_be" {
     direction                  = "Inbound"
   }
   security_rule {
+    name                       = "allow-fe-port"
+    protocol                   = "*"
+    source_address_prefixes    = concat(var.subnet_agw_cidr, var.subnet_fe_cidr)
+    source_port_range          = "*"
+    destination_port_ranges    = [var.fe_port]
+    destination_address_prefix = "VirtualNetwork"
+    access                     = "Allow"
+    priority                   = 104
+    direction                  = "Inbound"
+  }
+  security_rule {
     name                       = "allow-agw-management"
     source_address_prefix      = "GatewayManager"
     protocol                   = "*"
@@ -125,6 +136,17 @@ resource "azurerm_network_security_group" "nsg_fe" {
     direction                  = "Inbound"
   }
   security_rule {
+    name                       = "allow-bee-port"
+    protocol                   = "*"
+    source_address_prefixes    = concat(var.subnet_agw_cidr, var.subnet_fe_cidr)
+    source_port_range          = "*"
+    destination_port_ranges    = [var.be_port]
+    destination_address_prefix = "VirtualNetwork"
+    access                     = "Allow"
+    priority                   = 102
+    direction                  = "Inbound"
+  }
+  security_rule {
     name                       = "allow-agw-management"
     source_address_prefix      = "GatewayManager"
     protocol                   = "*"
@@ -132,7 +154,7 @@ resource "azurerm_network_security_group" "nsg_fe" {
     destination_port_ranges    = ["65200-65535"]
     destination_address_prefix = "*"
     access                     = "Allow"
-    priority                   = 102
+    priority                   = 103
     direction                  = "Inbound"
   }
 }

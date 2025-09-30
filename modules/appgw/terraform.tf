@@ -1,5 +1,5 @@
 resource "azurerm_application_gateway" "agw" {
-  name                = "${var.resource_prefix}-agw-${lower(replace(var.author, " ", "-"))}"
+  name                = "${lower(var.resource_prefix)}-agw-${lower(replace(var.author, " ", "-"))}"
   resource_group_name = var.rg_name
   location            = var.rg_location
   depends_on          = [var.fe_app_id, var.be_app_id]
@@ -49,7 +49,7 @@ resource "azurerm_application_gateway" "agw" {
 
     protocol                            = "Http"
     request_timeout                     = 60
-    port                                = var.fe_port
+    port                                = local.http_port
     pick_host_name_from_backend_address = true
     probe_name                          = local.pe_probe_fe
   }
@@ -59,7 +59,7 @@ resource "azurerm_application_gateway" "agw" {
     protocol              = "Http"
     request_timeout       = 60
     # Changed
-    port                                = var.be_port
+    port                                = local.http_port
     pick_host_name_from_backend_address = true
     probe_name                          = local.pe_probe_be
   }
@@ -120,7 +120,7 @@ resource "azurerm_application_gateway" "agw" {
 }
 
 resource "azurerm_public_ip" "agw_pip" {
-  name                = "${var.resource_prefix}-agw-pip-${lower(replace(var.author, " ", "-"))}"
+  name                = "${lower(var.resource_prefix)}-agw-pip-${lower(replace(var.author, " ", "-"))}"
   resource_group_name = var.rg_name
   location            = var.rg_location
   allocation_method   = "Static"
@@ -142,4 +142,6 @@ locals {
   pm_name                        = "${var.vnet_name}-path-map"
   pe_probe_be                    = "${var.vnet_name}-be-probe"
   pe_probe_fe                    = "${var.vnet_name}-fe-probe"
+  http_port                      = 80
+  https_port                     = 443
 }
