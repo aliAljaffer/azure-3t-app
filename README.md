@@ -2,6 +2,10 @@
 
 Deploys a three tier web app that uses App Service for the frontend (React) and the backend (Express.js) and an Azure SQL database for the database tier.
 
+## CI/CD Enabled Version of the Project
+
+Visit my other repository: [terraform-3t-app-with-cicd](https://github.com/aliAljaffer/terraform-3t-app-with-cicd) to see how I integrated a CI/CD pipeline that deploys the resources using Terraform and handles building and pushing the Docker images to Dockerhub, which are in turn used in the Terraform configuation for App Service.
+
 ## Features
 
 - Scalable solution, offering autoscaling based on CPU and Memory Utilization using Azure Monitor Autoscale settings.
